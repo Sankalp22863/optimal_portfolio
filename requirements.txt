@@ -1,11 +1,7 @@
 altair
-pandas
-streamlit
-pyplot
-numpy
+pandas==1.2.4
+streamlit==1.0.0
 datetime
-yfinance
-plotly
-pandas
-pandas_datareader
-matplotlib.pyplot
+yfinance==0.1.63
+plotly==5.3.1
+pandas-datareader==0.10.0
