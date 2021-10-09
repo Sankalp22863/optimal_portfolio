@@ -7,6 +7,8 @@ from fbprophet import Prophet
 from fbprophet.plot import plot_plotly
 from plotly import graph_objs as go
 
+from streamlit_player import st_player
+
 
 # Load Packages
 import numpy as np
@@ -114,8 +116,15 @@ if page == "Future Stock price prediction.":
 	st.write(fig2)
 
 if page == "Portfolio Reccomendations.":
+	amount = 0
 
-	n_years = st.sidebar.slider('The Peirod of investment :', 1, 4)
+	# Embed a youtube video
+	st_player("https://www.youtube.com/watch?v=jnJI6vp5b7o")
+
+	# Embed a music from SoundCloud
+	# st_player("https://soundcloud.com/imaginedragons/demons")
+
+	n_years = st.sidebar.slider('The Period of investment :', 1, 4)
 	period = n_years * 365
 	amount = st.sidebar.text_input('Enter the Amount you want to invest(Rs./anum).')
 
@@ -136,8 +145,10 @@ if page == "Portfolio Reccomendations.":
 		portfolio[i] = forecast['trend']
 
 	if True:	
-
-		"So the Optimal portfolio for the Target Investment of ", amount*n_years, "is being calculated."
+		try:
+			"So the Optimal portfolio for the Target Investment of ", int(amount)*int(n_years), "is being calculated."
+		except:
+			"Please Enter an amount you want to invest per Anum."
 
 		if metrics != []:
 			data_load_state.text('Predicting data... done!')
