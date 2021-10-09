@@ -5,3 +5,4 @@ datetime
 yfinance==0.1.63
 plotly==5.3.1
 pandas-datareader==0.10.0
+fbprophet==0.7.1
