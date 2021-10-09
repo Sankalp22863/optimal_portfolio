@@ -89,7 +89,7 @@ if page == "View Stocks.":
 if page == "Future Stock price prediction.":
 
 	selected_stock = st.sidebar.selectbox('Select dataset for prediction', stocks)
-	data = load_data(selected_stock)
+	data = load_data(t[selected_stock])
 
 	n_years = st.sidebar.slider('Years of prediction:', 1, 4)
 	period = n_years * 365
