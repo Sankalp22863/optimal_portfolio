@@ -118,8 +118,6 @@ if page == "Future Stock price prediction.":
 if page == "Portfolio Reccomendations.":
 	amount = 0
 
-	# Embed a youtube video
-	st_player("https://www.youtube.com/watch?v=jnJI6vp5b7o")
 
 	# Embed a music from SoundCloud
 	# st_player("https://soundcloud.com/imaginedragons/demons")
@@ -132,6 +130,16 @@ if page == "Portfolio Reccomendations.":
 
 
 	data_load_state = st.text('Predicting the Data...')
+	
+	try:
+		if int(amount) > 0 and metrics != []:
+			"Meanwhile get some advice about the investments."
+			# Embed a youtube video
+			st_player("https://www.youtube.com/watch?v=jnJI6vp5b7o")
+	except:
+		pass
+
+
 	portfolio = pd.DataFrame([])
 	for i in metrics:
 		data = load_data(t[i])
