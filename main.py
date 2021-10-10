@@ -7,6 +7,9 @@ from fbprophet import Prophet
 from fbprophet.plot import plot_plotly
 from plotly import graph_objs as go
 
+import tkinter as tk
+from tkinter import ttk
+
 from streamlit_player import st_player
 
 
@@ -18,12 +21,42 @@ from datetime import date
 
 import matplotlib.pyplot as plt
 
+def popupmsg(msg):
+    popup = tk.Tk()
+    popup.wm_title("!")
+    label = ttk.Label(popup, text=msg)
+    label.pack(side="top", fill="x", pady=10)
+    B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
+    B1.pack()
+    popup.mainloop()
 
+
+@st.cache
+def pred(metrics):
+	for i in metrics:
+				data = load_data(t[i])
+				df_train = data[['Date','Close']]
+				df_train = df_train.rename(columns={"Date": "ds", "Close": "y"})
+				m = Prophet()
+				m.fit(df_train)
+				future = m.make_future_dataframe(periods=period)
+				forecast = m.predict(future)
+				portfolio["Date"] = forecast['ds']
+				portfolio[i] = forecast['trend']
+
+
+st.set_page_config(
+    page_title="Portfolio Reccomendation App",
+    page_icon="🧊",
+    layout="centered",
+    initial_sidebar_state="auto"
+)
 
 START = "2015-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
 st.title('Portfolio Optimization')
+# st.write("[![Star](<https://img.shields.io/github/stars/><username>/<repo>.svg?logo=github&style=social)](<https://gitHub.com/><Sanklp22863>/<Optimal Portfolio>)")
 
 # Create a page dropdown 
 page = st.sidebar.selectbox("Choose your page", ["View Stocks.", "Future Stock price prediction.", "Portfolio Reccomendations."]) 
@@ -75,15 +108,27 @@ if page == "View Stocks.":
 	st.subheader('Stock Prices')
 	st.write(data.tail())
 
+	def plot_stock(df, name):
+		fig = go.Figure()
+		config = {'responsive': True}
+		fig = go.Figure(data=[go.Candlestick(x=df['Date'],
+                open=df['Open'],
+                high=df['High'],
+                low=df['Low'],
+                close=df['Close'])])
+		st.plotly_chart(fig)
+
 	# Plot raw data
 	def plot_raw_data():
 		fig = go.Figure()
+		
 		fig.add_trace(go.Scatter(x=data['Date'], y=data['Open'], name="stock_open"))
 		fig.add_trace(go.Scatter(x=data['Date'], y=data['Close'], name="stock_close"))
 		fig.layout.update(title_text='Time Series data with Rangeslider', xaxis_rangeslider_visible=True)
 		st.plotly_chart(fig)
 		
-	plot_raw_data()
+	# plot_raw_data()
+	plot_stock(data, selected_stock)
 
 
 if page == "Future Stock price prediction.":
@@ -118,6 +163,7 @@ if page == "Future Stock price prediction.":
 if page == "Portfolio Reccomendations.":
 	amount = 0
 	metrics = []
+	# popupmsg("Mutual Funds are subject to market risk.")
 
 	# Embed a music from SoundCloud
 	# st_player("https://soundcloud.com/imaginedragons/demons")
@@ -125,7 +171,7 @@ if page == "Portfolio Reccomendations.":
 	n_years = st.sidebar.slider('The Period of investment :', 1, 4)
 	period = n_years * 365
 	amount = st.sidebar.text_input('Enter the Amount you want to invest(Rs./anum).')
-	no_of_stocks = st.sidebar.text_input('Enter the No. of stocks you want to invest.')
+	no_of_stocks = st.sidebar.number_input('Enter the No. of stocks you want to invest.' , min_value=1, max_value=10, value=4)
 
 	try:
 		if len(metrics) < int(no_of_stocks):
@@ -134,7 +180,8 @@ if page == "Portfolio Reccomendations.":
 		pass
 
 
-	data_load_state = st.text('Predicting the Data...')
+	data_load_state = st.text('Select appropriate options.')
+	
 	
 	try:
 		if int(amount) > 0 and len(metrics) >= int(no_of_stocks):
@@ -147,16 +194,8 @@ if page == "Portfolio Reccomendations.":
 	try:
 		if len(metrics) == int(no_of_stocks):
 			portfolio = pd.DataFrame([])
-			for i in metrics:
-				data = load_data(t[i])
-				df_train = data[['Date','Close']]
-				df_train = df_train.rename(columns={"Date": "ds", "Close": "y"})
-				m = Prophet()
-				m.fit(df_train)
-				future = m.make_future_dataframe(periods=period)
-				forecast = m.predict(future)
-				portfolio["Date"] = forecast['ds']
-				portfolio[i] = forecast['trend']
+			data_load_state.text('Predicting data...')
+			pred(metrics)
 	
 
 		if True:	
@@ -273,7 +312,7 @@ if page == "Portfolio Reccomendations.":
 
 
 			else:
-				data_load_state.text('Please Select at least one stock.')
+				data_load_state.text('Please Select at stocks.')
 
 	except:
 		pass
