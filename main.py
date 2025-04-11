@@ -52,7 +52,7 @@ st.set_page_config(
     initial_sidebar_state="auto"
 )
 
-START = "2015-01-01"
+START = "2020-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
 st.title('Portfolio Optimization')
