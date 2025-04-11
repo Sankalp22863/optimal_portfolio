@@ -7,6 +7,5 @@ plotly==5.3.1
 pandas-datareader==0.10.0
 Cython>=0.29
 numpy>=1.19.5
-pystan==2.19.1.1
 prophet==1.1.4
 streamlit-player==0.1.5
